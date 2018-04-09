@@ -1,19 +1,17 @@
 # MyReads Project
 
-This is the starter template for the final assessment project for Udacity's React Fundamentals course. The goal of this template is to save you time by providing a static example of the CSS and HTML markup that may be used, but without any of the React code that is needed to complete the project. If you choose to start with this template, your job will be to add interactivity to the app by refactoring the static code in this template.
-
-Of course, you are free to start this project from scratch if you wish! Just be sure to use [Create React App](https://github.com/facebookincubator/create-react-app) to bootstrap the project.
+The MyReads project is a bookshelf app that allows you to select and categorize books you have read, are currently reading, or want to read. The app allows searching for new books to add to shelves and provides an API server and client library that you will use to persist information as you interact with the application.
 
 ## TL;DR
 
 To get started developing right away:
 
+* clone the project repository from GitHub
 * install all project dependencies with `npm install`
 * start the development server with `npm start`
 
-## What You're Getting
+## Project File Structure
 ```bash
-├── CONTRIBUTING.md
 ├── README.md - This file.
 ├── SEARCH_TERMS.md # The whitelisted short collection of available search terms for you to use with your app.
 ├── package.json # npm package manager file. It's unlikely that you'll need to modify this.
@@ -22,8 +20,11 @@ To get started developing right away:
 │   └── index.html # DO NOT MODIFY
 └── src
     ├── App.css # Styles for your app. Feel free to customize this as you desire.
-    ├── App.js # This is the root of your app. Contains static HTML right now.
+    ├── App.js # This is the root of app. Contains BooksApp component.
     ├── App.test.js # Used for testing. Provided with Create React App. Testing is encouraged, but not required.
+    ├── SearchBooks.js # Used for handling searching and returning results from queries. Contains SearchBooks component.
+    ├── Bookshelf.js # Used for creating bookshelf container for listing books. Contains Bookshelf component.
+    ├── ListBooks.js # Used for sorting and listing books within bookshelves. Contains ListBooks component.
     ├── BooksAPI.js # A JavaScript API for the provided Udacity backend. Instructions for the methods are below.
     ├── icons # Helpful images for your app. Use at your discretion.
     │   ├── add.svg
@@ -33,11 +34,107 @@ To get started developing right away:
     └── index.js # You should not need to modify this file. It is used for DOM rendering only.
 ```
 
-Remember that good React design practice is to create new JS files for each component and use import/require statements to include them where they are needed.
+## BooksApp
+
+App Functionality
+In this application, the main page displays a list of "shelves" (i.e. categories), each of which contains a number of books. The three shelves are:
+
+* Currently Reading
+* Want to Read
+* Read
+
+The homepage of the MyReads App shows the title "MyReads" and then three shelves, which are named "Currently Reading," "Want to Read," and "Read." There are books on each shelf. Each book has a control [green circle] in the bottom right-hand corner that lets you select the shelf for that book. When you select a different shelf, the book moves there. The default value for the control is the current shelf the book is in.
+
+The app also has a button [green plus sign icon] in the bottom right-hand corner that navigates to the search page. The search page has a text input that may be used to find books. As the value of the text input changes, the books that match that query are displayed on the page, along with a control that lets you add the book to your library. Again, each book has a control that lets you select the shelf for that book. Each book in this search page will have either its current shelf assignment if it exists, or will show as "none".
+
+* [`shelfChange`](#shelfchange)
+* [`updateQuery`](#updatequery)
+* [`updateSearchShelves`](#updatesearchshelves)
+
+### `shelfChange`
+
+Sends API updated shelf for book then sets state for books and searchResults
+
+Method Signature:
+
+```js
+shelfChange(book, shelf)
+```
+
+* book: `<Object>` whose shelf is being altered
+* shelf: `<String>` shelf book is being moved to
+
+### `updateQuery`
+
+This receives an updated query, trims leading whitespaces, and sends non-empty queries to search API. Received books array is matched against state books array for any existing shelf assignments before being set to searchResults state.
+
+Method Signature:
+
+```js
+updateQuery(query)
+```
+
+* query: `<String>` search term from user input field
+
+### `updateSearchShelves`
+
+searchResults array is mapped against against books array to find any matching book IDs. If a match exists, the searchResults book's shelf is updated to the shelf of the match. Otherwise, a "none" value is assigned.
+
+Method Signature:
+
+```js
+updateSearchShelves(books, searchResults)
+```
+
+* books: `<Array>` of book objects to match against
+* searchResults: `<Array>` of book objects to be assigned shelves
+* Returns an array of book objects with shelf property assignments
+
+## SearchBooks
+
+SearchBooks presents a text input field for the user to input a search query. When this query updates, the onUpdateQuery function updates the main BookApp's state for query and searches for books. This updated query and searchResults array are then passed back to SearchBooks to render in a Bookshelf container.
+
+Component Signature:
+
+```js
+<SearchBooks query, results, onShelfChange, onUpdateQuery />
+```
+
+* query: `<String>` of query text input from user passed from upstream state
+* results: `<Array>` of book objects returned from search query and passed from upstream state
+* onShelfChange: `<Method>` handles change of state for shelf change
+* onUpdateQuery: `<Method>` handles change of state for query
+
+## Bookshelf
+
+Bookshelf component creates a bookshelf with appropriate title, passes books and onShelfChange to ListBooks to render books and handle shelf changes
+
+Component Signature:
+
+```js
+<Bookshelf books, title, onShelfChange />
+```
+
+* books: `<Array>` of book objects to be listed for bookshelf
+* title: `<String>` title of bookshelf
+* onShelfChange: `<Method>` handles change of state for shelf change
+
+## ListBooks
+
+ListBooks component renders each book with relevant book parameters and shelf state. Sorts books by title, then author before rendering
+
+Component Signature:
+
+```js
+<ListBooks books, onShelfChange />
+```
+
+* books: `<Array>` of book objects to be listed for bookshelf
+* onShelfChange: `<Method>` handles change of state for shelf change
 
 ## Backend Server
 
-To simplify your development process, we've provided a backend server for you to develop against. The provided file [`BooksAPI.js`](src/BooksAPI.js) contains the methods you will need to perform necessary operations on the backend:
+Udacity provided a backend server to develop against. The provided file [`BooksAPI.js`](src/BooksAPI.js) contains the methods you will need to perform necessary operations on the backend:
 
 * [`getAll`](#getall)
 * [`update`](#update)

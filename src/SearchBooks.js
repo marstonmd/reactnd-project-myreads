@@ -3,6 +3,18 @@ import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import Bookshelf from './Bookshelf'
 
+/**
+* @desc SearchBooks presents a text input field for the user to input a search
+* query. When this query updates, the onUpdateQuery function updates the main
+* BookApp's state for query and searches for books. This updated query and
+* searchResults array are then passed back to SearchBooks to render in a
+* Bookshelf container.
+* @prop {string} query = query text input from user passed from upstream state
+* @prop {array} results = array of book objects returned from search query and
+* passed from upstream state
+* @prop {function} onShelfChange = handles change of state for shelf change
+* @prop {funciton} onUpdateQuery = handles change of state for query
+*/
 class SearchBooks extends Component {
   static propTypes = {
     query: PropTypes.string.isRequired,
@@ -12,7 +24,7 @@ class SearchBooks extends Component {
   }
 
   render() {
-    const { query, results, onShelfChange, onUpdateQuery } = this.props
+    const { query, results, onShelfChange, onUpdateQuery } = this.props;
 
     return (
       <div className="search-books">

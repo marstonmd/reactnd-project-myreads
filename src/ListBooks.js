@@ -2,6 +2,12 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import sortBy from 'sort-by'
 
+/**
+* @desc ListBooks component renders each book with relevant book parameters and
+* shelf state. Sorts books by title, then author before rendering
+* @prop {array} books = array of book objects to be listed for bookshelf
+* @prop {function} onShelfChange = handles change of state for shelf change
+*/
 class ListBooks extends Component {
   static propTypes = {
     books: PropTypes.array.isRequired,
@@ -10,7 +16,7 @@ class ListBooks extends Component {
 
   render() {
     const { books, onShelfChange } = this.props
-    let sortedBooks=books.sort(sortBy('title','authors'))
+    let sortedBooks=books.sort(sortBy('title','authors'));
 
     return (
       <ol className="books-grid">
